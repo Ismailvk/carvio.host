@@ -3,7 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:second_project/utils/map_box.dart';
-import 'package:second_project/view_model/add_vehicle_controller.dart';
+import 'package:second_project/view_model/vehicle_controller.dart';
 
 class MapBoxController extends GetxController {
   LatLng latlong = const LatLng(9.931233, 76.267303);
@@ -36,7 +36,7 @@ class MapBoxController extends GetxController {
     List<String> parts = fullPlaceName.split(RegExp(r'[,|-]'));
     String firstName =
         parts.firstWhere((part) => part.trim().isNotEmpty, orElse: () => '');
-    AddVehicleController controller = Get.put(AddVehicleController());
+    VehicleController controller = Get.put(VehicleController());
     controller.locationController.text = firstName.trim();
     mapLoctionController.text = firstName.trim();
     return firstName.trim();

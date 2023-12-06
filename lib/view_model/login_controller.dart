@@ -38,7 +38,7 @@ class LoginController extends GetxController {
           print('login user data $userData');
           final loginData = jsonDecode(userData.body);
           final data = HostModel.fromJson(loginData);
-          await hostController.setHostData(data);
+          hostController.setHostData(data);
           await hostController.getHostVehicles(token);
           Get.offAll(const CoustomNavBar());
           onClose();

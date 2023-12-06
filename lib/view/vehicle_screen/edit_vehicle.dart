@@ -1,8 +1,10 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:second_project/model/vehicle_model.dart';
 import 'package:second_project/resource/colors/colors.dart';
-import 'package:second_project/view/upload_page/upload_screen.dart';
+import 'package:second_project/utils/converting_string_to_file.dart';
 import 'package:second_project/view/vehicle_screen/map_screen.dart';
 import 'package:second_project/view_model/vehicle_controller.dart';
 import 'package:second_project/widget/appbar_backbutton_widget.dart';
@@ -11,10 +13,39 @@ import 'package:second_project/widget/drop_down_widget.dart';
 import 'package:second_project/widget/hind_text_widget.dart';
 import 'package:second_project/widget/texfield.dart';
 
-class AddVehicelScreen extends StatelessWidget {
-  AddVehicelScreen({Key? key}) : super(key: key);
+// ignore: must_be_immutable
+class EditVehicleScreen extends StatefulWidget {
+  VehicleModel vehicleData;
+  EditVehicleScreen({Key? key, required this.vehicleData}) : super(key: key);
 
+  @override
+  State<EditVehicleScreen> createState() => _EditVehicleScreenState();
+}
+
+class _EditVehicleScreenState extends State<EditVehicleScreen> {
   final VehicleController addVehicleController = Get.put(VehicleController());
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () async {
+      addVehicleController.nameController.text = widget.vehicleData.name;
+      addVehicleController.brandController.text = widget.vehicleData.brand;
+      addVehicleController.modelController.text =
+          widget.vehicleData.model.toString();
+      addVehicleController.locationController.text =
+          widget.vehicleData.location;
+      addVehicleController.priceController.text =
+          widget.vehicleData.price.toString();
+      addVehicleController.fuelController.text = widget.vehicleData.fuel;
+      addVehicleController.transmissionController.text =
+          widget.vehicleData.transmission;
+
+      List<File> imageFiles =
+          await convertingStringtoImage(widget.vehicleData.images);
+      addVehicleController.selectedImages.value = imageFiles;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,11 +73,11 @@ class AddVehicelScreen extends StatelessWidget {
                             Expanded(
                               child: ButtonWidget(
                                 title:
-                                    addVehicleController.currentStep.value != 2
+                                    addVehicleController.currentStep.value != 1
                                         ? 'Continue'
                                         : 'Confirm',
-                                onPress: () =>
-                                    addVehicleController.addVehicle(),
+                                onPress: () => addVehicleController
+                                    .editVehicle(widget.vehicleData.id),
                               ),
                             ),
                             const SizedBox(width: 10),
@@ -68,7 +99,7 @@ class AddVehicelScreen extends StatelessWidget {
                             ? StepState.complete
                             : StepState.indexed,
                         isActive: addVehicleController.currentStep.value == 0,
-                        title: const Text('data'),
+                        title: const Text('Details'),
                         content: Form(
                           key: addVehicleController.addVehicleDetailsKey,
                           child: Column(
@@ -153,16 +184,6 @@ class AddVehicelScreen extends StatelessWidget {
                                 number: TextInputType.number,
                               ),
                               const SizedBox(height: 10),
-                              MyTextField(
-                                isSufix: false,
-                                validator: (value) =>
-                                    addVehicleController.validation(value!),
-                                controller:
-                                    addVehicleController.numberController,
-                                hintText: 'Number',
-                                obscureText: false,
-                                number: TextInputType.number,
-                              ),
                             ],
                           ),
                         ),
@@ -172,7 +193,7 @@ class AddVehicelScreen extends StatelessWidget {
                               ? StepState.complete
                               : StepState.indexed,
                           isActive: addVehicleController.currentStep.value == 1,
-                          title: const Text('account'),
+                          title: const Text('Document'),
                           content: Obx(
                             () => SingleChildScrollView(
                               child: Form(
@@ -288,13 +309,13 @@ class AddVehicelScreen extends StatelessWidget {
                               ),
                             ),
                           )),
-                      Step(
-                        isActive: addVehicleController.currentStep.value == 2,
-                        title: const Text('final'),
-                        content: Form(
-                            key: addVehicleController.addVehicleDocumentsKey,
-                            child: UploadImageScreen()),
-                      )
+                      // Step(
+                      //   isActive: addVehicleController.currentStep.value == 2,
+                      //   title: const Text('final'),
+                      //   content: Form(
+                      //       key: addVehicleController.addVehicleDocumentsKey,
+                      //       child: UploadImageScreen()),
+                      // )
                     ],
                   ),
                 ),

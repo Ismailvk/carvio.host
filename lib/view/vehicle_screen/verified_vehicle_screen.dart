@@ -5,7 +5,10 @@ import 'package:get/get.dart';
 import 'package:second_project/model/vehicle_model.dart';
 import 'package:second_project/resource/colors/colors.dart';
 import 'package:second_project/service/api_url.dart';
+import 'package:second_project/view/vehicle_screen/edit_vehicle.dart';
 import 'package:second_project/view_model/host_controller.dart';
+import 'package:second_project/view_model/vehicle_controller.dart';
+import 'package:second_project/widget/alert_box.dart';
 import 'package:second_project/widget/hind_text_widget.dart';
 import 'package:second_project/widget/popins_text_widget.dart';
 
@@ -14,12 +17,13 @@ class VerifiedVehicle extends StatelessWidget {
   VerifiedVehicle({super.key});
 
   HostController hostController = Get.put(HostController());
+  VehicleController vehicleController = Get.put(VehicleController());
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: GetBuilder<HostController>(
-      builder: (builder) {
-        return ListView.builder(
+    return Scaffold(
+      body: Obx(
+        () => ListView.builder(
           itemCount: hostController.verifiedVehicle.length,
           itemBuilder: (context, index) {
             VehicleModel vehicleData = hostController.verifiedVehicle[index];
@@ -149,7 +153,10 @@ class VerifiedVehicle extends StatelessWidget {
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 10.0),
                                         child: ElevatedButton(
-                                          onPressed: () {},
+                                          onPressed: () {
+                                            Get.to(EditVehicleScreen(
+                                                vehicleData: vehicleData));
+                                          },
                                           style: ElevatedButton.styleFrom(
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
@@ -161,7 +168,8 @@ class VerifiedVehicle extends StatelessWidget {
                                         ),
                                       ),
                                       ElevatedButton(
-                                        onPressed: () {},
+                                        onPressed: () => AlertBox()
+                                            .deleteAlert(vehicleData.id, index),
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: red,
                                           shape: RoundedRectangleBorder(
@@ -181,10 +189,10 @@ class VerifiedVehicle extends StatelessWidget {
                       ),
                     ),
                   )
-                : Center(child: Text('No vehicle found'));
+                : const Center(child: Text('No vehicle found'));
           },
-        );
-      },
-    ));
+        ),
+      ),
+    );
   }
 }

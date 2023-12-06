@@ -25,18 +25,18 @@ class HostController extends GetxController {
   Future<void> getHostVehicles(String token) async {
     final response = await ApiService.instance.getHostVehicles(token);
     final List<dynamic> vehicleDetails = jsonDecode(response.body);
-    print('a=== $vehicleDetails');
     vehicleData.assignAll(
         vehicleDetails.map((json) => VehicleModel.fromJson(json)).toList());
     pendingVehicle.assignAll(
         vehicleData.where((vehicle) => !vehicle.isVerified).toList());
     verifiedVehicle
         .assignAll(vehicleData.where((vehicle) => vehicle.isVerified).toList());
+
     update();
   }
 
-  setHostData(hostData) {
-    this.hostData = hostData;
+  setHostData(HostModel hostData) {
+    this.hostData = hostData.obs;
     update();
   }
 }

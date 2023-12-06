@@ -9,7 +9,7 @@ import 'package:second_project/view/bottombar_screen/main_screen.dart';
 import 'package:second_project/view_model/host_controller.dart';
 import 'package:second_project/view_model/upload_image_screen_controller.dart';
 
-class AddVehicleController extends GetxController {
+class VehicleController extends GetxController {
   GlobalKey<FormState> addVehicleDetailsKey = GlobalKey<FormState>();
   GlobalKey<FormState> addVehiclePhotosKey = GlobalKey<FormState>();
   GlobalKey<FormState> addVehicleDocumentsKey = GlobalKey<FormState>();
@@ -77,7 +77,6 @@ class AddVehicleController extends GetxController {
                   .addVehicle(vehicledata, selectedImages, document);
               try {
                 if (response.statusCode == 200) {
-                  print('Images and details uploaded successfully');
                   // var responseBody = await response.stream.bytesToString();
                   HostController hostController = Get.put(HostController());
                   final token = SharedPreference.instance.getToke();
@@ -88,8 +87,7 @@ class AddVehicleController extends GetxController {
                   Get.snackbar('Success', 'Vehicle added Successfully');
                   Get.offAll(const CoustomNavBar());
                 } else {
-                  print(
-                      'Failed to upload images and details. Status code: ${response.statusCode}');
+                  Get.snackbar('Error', "Failed to upload images and details");
                 }
               } catch (error) {
                 print('Error uploading images and details: $error');
@@ -105,6 +103,70 @@ class AddVehicleController extends GetxController {
     }
   }
 
+  deleteVehicle(String id, int index) async {
+    final token = SharedPreference.instance.getToke();
+    if (token == null) {
+      Get.snackbar('Error', "You cant't delete vehicle");
+      return;
+    }
+    try {
+      final response = await ApiService.instance.deleteVehicle(id, token);
+      if (response.statusCode == 200) {
+        HostController controller = Get.put(HostController());
+        controller.verifiedVehicle.removeAt(index);
+        await ApiService.instance.getHostVehicles(token);
+        Get.snackbar('Success', 'Successfully delete your vehicle');
+        update();
+      }
+    } catch (e) {
+      Get.snackbar('Error', '$e');
+    }
+  }
+
+  editVehicle(String id) async {
+    if (addVehicleDetailsKey.currentState!.validate()) {
+      currentStep.value = (currentStep.value + 1).clamp(0, 1);
+      if (addVehiclePhotosKey.currentState!.validate()) {
+        if (selectedImages.isNotEmpty) {
+          String fuel = fuelController.text;
+          String transmission = transmissionController.text;
+          final model = int.tryParse(modelController.text.trim());
+          final price = int.tryParse(priceController.text.trim());
+          String name = nameController.text.trim();
+          String brand = brandController.text.trim();
+          String location = locationController.text.trim();
+          final Map<String, dynamic> editedVehicleData = {
+            'name': name,
+            'brand': brand,
+            'location': location,
+            'price': price,
+            'model': model,
+            'transmission': transmission,
+            'fuel': fuel,
+          };
+          try {
+            final response = await ApiService.instance
+                .editVehicle(id, editedVehicleData, selectedImages);
+            if (response.statusCode == 200) {
+              HostController hostController = Get.put(HostController());
+              final token = SharedPreference.instance.getToke();
+              if (token == null) {
+                return Get.snackbar('Error', "You can't edit vehicle");
+              }
+              await hostController.getHostVehicles(token);
+              Get.snackbar('Success', 'Vehicle Edited Successfully');
+              Get.offAll(const CoustomNavBar());
+            }
+          } catch (e) {
+            print('Error is $e');
+          }
+        } else {
+          Get.snackbar('Error', "Please select your images");
+        }
+      }
+    }
+  }
+
   String? validation(String value) {
     if (value.isEmpty) {
       return 'Field is required';
@@ -113,7 +175,6 @@ class AddVehicleController extends GetxController {
   }
 
   void moveToPreviousStep() {
-    print('decrement');
     currentStep.value = (currentStep.value - 1).clamp(0, 2);
   }
 }
