@@ -48,3 +48,64 @@ class DropDownWid extends StatelessWidget {
     );
   }
 }
+
+class BrandDropDownWid extends StatelessWidget {
+  BrandDropDownWid({super.key, required this.controller});
+  final TextEditingController controller;
+  final List<String> fuelList = [
+    'Toyota',
+    'Volkswagen',
+    'Ford',
+    'Honda',
+    'Chevrolet',
+    'Nissan',
+    'Mercedes-Benz',
+    'BMW',
+    'Audi',
+    'Hyundai',
+    'Kia',
+    'Tesla',
+    'TATA',
+    'Porsche',
+    'Jaguar'
+  ];
+
+  final TextStyle _labelStyle =
+      GoogleFonts.poppins(fontWeight: FontWeight.w600);
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 8),
+        Text(
+          'Brand',
+          style: GoogleFonts.poppins(fontSize: 17, fontWeight: FontWeight.w500),
+        ),
+        const SizedBox(height: 8),
+        CustomDropdown(
+          selectedStyle: GoogleFonts.poppins(color: Colors.black),
+          hintText: "Select your brand",
+          hintStyle: GoogleFonts.poppins(),
+          items: fuelList,
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(
+            color: Colors.black,
+            width: 1,
+          ),
+          controller: controller,
+          excludeSelected: false,
+          listItemBuilder: (context, result) {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(result, style: _labelStyle),
+                const Icon(Icons.circle_outlined)
+              ],
+            );
+          },
+        ),
+      ],
+    );
+  }
+}

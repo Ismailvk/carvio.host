@@ -82,15 +82,9 @@ class AddVehicelScreen extends StatelessWidget {
                                 obscureText: false,
                               ),
                               const SizedBox(height: 10),
-                              MyTextField(
-                                isSufix: false,
-                                validator: (value) =>
-                                    addVehicleController.validation(value!),
-                                controller:
-                                    addVehicleController.brandController,
-                                hintText: 'Brand',
-                                obscureText: false,
-                              ),
+                              BrandDropDownWid(
+                                  controller:
+                                      addVehicleController.brandController),
                               const SizedBox(height: 10),
                               MyTextField(
                                 isSufix: false,

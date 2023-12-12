@@ -8,4 +8,6 @@ class Urls {
   static const String getHostVehicle = 'host/host-vehicles';
   static const String deleteVehicle = 'host/delete-vehicle';
   static const String editVehicle = 'host/edit-vehicle';
+  static const String editHostData = 'host/update-host';
+  static const String uploadProfile = 'host/upload-profile';
 }

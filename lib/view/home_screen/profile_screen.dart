@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:second_project/resource/colors/colors.dart';
+import 'package:second_project/service/api_url.dart';
 import 'package:second_project/view/my_profile_screen/my_profile_screen.dart';
 import 'package:second_project/view/setting_screen/settings_screen.dart';
 import 'package:second_project/view_model/host_controller.dart';
@@ -53,26 +54,49 @@ class ProfileScreen extends StatelessWidget {
               Positioned(
                 top: Get.height / 15,
                 left: Get.width / 2 - 50,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: white,
-                      radius: 50,
-                      child: const CircleAvatar(
-                        radius: 45,
-                        backgroundImage: AssetImage('lib/image/mustang.jpeg'),
-                      ),
-                    ),
-                    PopinsTextWidget(
-                      isBold: false,
-                      text: hostController.hostData.value!.name.toUpperCase(),
-                      size: 16,
-                      color: white,
-                      left: 0,
-                      top: 10,
-                    )
-                  ],
+                child: Obx(
+                  () {
+                    final profile =
+                        hostController.hostData.value!.profilePicture;
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        profile != null
+                            ? CircleAvatar(
+                                backgroundColor: white,
+                                radius: 60,
+                                child: SizedBox(
+                                  width: Get.width / 3.5,
+                                  height: Get.height / 7,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(60),
+                                    child: Image.network(
+                                      '${Urls.baseUrl}/$profile',
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : CircleAvatar(
+                                backgroundColor: white,
+                                radius: 50,
+                                child: const CircleAvatar(
+                                    radius: 45,
+                                    backgroundImage:
+                                        AssetImage('lib/image/user.png')),
+                              ),
+                        PopinsTextWidget(
+                          isBold: false,
+                          text:
+                              hostController.hostData.value!.name.toUpperCase(),
+                          size: 16,
+                          color: white,
+                          left: 0,
+                          top: 10,
+                        )
+                      ],
+                    );
+                  },
                 ),
               ),
             ],

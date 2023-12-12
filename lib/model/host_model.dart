@@ -12,6 +12,7 @@ class HostModel {
   String password;
   bool isBlocked;
   bool isVerified;
+  String? profilePicture;
 
   HostModel(
       {required this.id,
@@ -20,16 +21,19 @@ class HostModel {
       required this.phone,
       required this.password,
       required this.isBlocked,
-      required this.isVerified});
+      required this.isVerified,
+      this.profilePicture});
 
   factory HostModel.fromJson(Map<String, dynamic> json) => HostModel(
-      id: json["_id"],
-      name: json["name"],
-      email: json["email"],
-      phone: json["phone"],
-      password: json["password"],
-      isBlocked: json['isBlocked'],
-      isVerified: json['isVerified']);
+        id: json["_id"],
+        name: json["name"],
+        email: json["email"],
+        phone: json["phone"],
+        password: json["password"],
+        isBlocked: json['isBlocked'],
+        isVerified: json['isVerified'],
+        profilePicture: json['profile'],
+      );
 
   Map<String, dynamic> toJson() => {
         "_id": id,
@@ -38,6 +42,7 @@ class HostModel {
         "phone": phone,
         "password": password,
         "isBlocked": isBlocked,
-        "isVerified": isVerified
+        "isVerified": isVerified,
+        "profile": profilePicture,
       };
 }

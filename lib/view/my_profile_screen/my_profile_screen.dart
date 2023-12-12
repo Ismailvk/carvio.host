@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:second_project/resource/colors/colors.dart';
+import 'package:second_project/service/api_url.dart';
 import 'package:second_project/view_model/host_controller.dart';
 import 'package:second_project/widget/appbar_backbutton_widget.dart';
 
@@ -17,11 +18,32 @@ class MyprofileScreen extends StatelessWidget {
         children: [
           AppbarBckbutton(text: 'My Profile'),
           const SizedBox(height: 30),
-          CircleAvatar(
-            radius: 60,
-            backgroundColor: red,
-            backgroundImage: const AssetImage('lib/image/bmw.png'),
-          ),
+          Obx(() {
+            final profile = hostController.hostData.value!.profilePicture;
+            return profile != null
+                ? CircleAvatar(
+                    radius: 60,
+                    child: SizedBox(
+                      width: Get.width / 3.5,
+                      height: Get.height / 7,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(60),
+                        child: Image.network(
+                          '${Urls.baseUrl}/$profile',
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  )
+                : CircleAvatar(
+                    radius: 60,
+                    backgroundColor: red,
+                    child: Image.asset(
+                      'lib/image/user.png',
+                      fit: BoxFit.fill,
+                    ),
+                  );
+          }),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: TextField(

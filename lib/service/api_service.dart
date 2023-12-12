@@ -103,6 +103,7 @@ class ApiService {
       'Cookie': 'jwtHost=$token'
     };
     final response = await http.get(url, headers: header);
+    print(response.body);
     return response;
   }
 
@@ -148,6 +149,41 @@ class ApiService {
 
     var response = await request.send();
 
+    return response;
+  }
+
+  Future<http.Response> editHosData(
+      Map<String, dynamic> hostData, String token) async {
+    final url = Uri.parse('${Urls.baseUrl}/${Urls.editHostData}');
+    final body = jsonEncode(hostData);
+    final header = {
+      'Authorization': 'Bearer $token',
+      'Cookie': 'jwtHost=$token',
+      'Content-Type': 'application/json'
+    };
+    final response = await http.patch(url, body: body, headers: header);
+    return response;
+  }
+
+  Future<http.StreamedResponse> profileUpdate(File image) async {
+    final token = SharedPreference.instance.getToke();
+    final url = Uri.parse('${Urls.baseUrl}/${Urls.uploadProfile}');
+
+    var request = http.MultipartRequest('POST', url);
+    request.headers['Authorization'] = 'Bearer $token';
+    request.headers['Cookie'] = 'jwtHost=$token';
+
+    var profilePhotoStream = http.ByteStream(image.openRead());
+    var profilePhotoLength = await image.length();
+    var profilePhotoMultipartFile = http.MultipartFile(
+      'file',
+      profilePhotoStream,
+      profilePhotoLength,
+      filename: 'profilephoto.jpg',
+    );
+    request.files.add(profilePhotoMultipartFile);
+    final response = await request.send();
+    print(response.statusCode);
     return response;
   }
 }
