@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:second_project/resource/colors/colors.dart';
+import 'package:second_project/view_model/vehicle_controller.dart';
 import 'package:second_project/widget/hind_text_widget.dart';
 
 // ignore: must_be_immutable
 class AppbarBckbutton extends StatelessWidget {
   String text;
-  Icon? iconButton;
-  AppbarBckbutton({super.key, required this.text, this.iconButton});
+  bool? isClear;
+  AppbarBckbutton({super.key, required this.text, this.isClear});
+  VehicleController controller = Get.put(VehicleController());
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +19,10 @@ class AppbarBckbutton extends StatelessWidget {
         child: ListTile(
           titleAlignment: ListTileTitleAlignment.center,
           leading: GestureDetector(
-            onTap: () => Get.back(),
+            onTap: () {
+              Get.back();
+              isClear == true ? controller.resetValues() : null;
+            },
             child: Container(
               height: Get.height / 14,
               width: Get.width / 6.5,

@@ -103,7 +103,6 @@ class ApiService {
       'Cookie': 'jwtHost=$token'
     };
     final response = await http.get(url, headers: header);
-    print(response.body);
     return response;
   }
 
@@ -152,6 +151,18 @@ class ApiService {
     return response;
   }
 
+  deleteVehicleImages(String vehicleId, String imageId, String token) async {
+    final url = Uri.parse(
+        '${Urls.baseUrl}/${Urls.deleteVehicleImage}/$vehicleId?file=$imageId');
+    final header = {
+      'Authorization': 'Bearer $token',
+      'Cookie': 'jwtHost=$token',
+      'Content-Type': 'application/json'
+    };
+    final body = await http.patch(url, headers: header);
+    print(body.statusCode);
+  }
+
   Future<http.Response> editHosData(
       Map<String, dynamic> hostData, String token) async {
     final url = Uri.parse('${Urls.baseUrl}/${Urls.editHostData}');
@@ -183,6 +194,28 @@ class ApiService {
     );
     request.files.add(profilePhotoMultipartFile);
     final response = await request.send();
+    print(response.statusCode);
+    return response;
+  }
+
+  Future<http.Response> forgetPassword(Map<String, String> email) async {
+    final url = Uri.parse('${Urls.baseUrl}/${Urls.forgetPassword}');
+    final body = jsonEncode(email);
+    final response = await http.post(url, headers: headers, body: body);
+    print(response.statusCode);
+    return response;
+  }
+
+  Future<http.Response> changePassword(
+      String token, Map<String, String> changedPassword) async {
+    final url = Uri.parse('${Urls.baseUrl}/${Urls.changePassword}');
+    final body = jsonEncode(changedPassword);
+    final header = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+      'Cookie': 'jwtHost=$token'
+    };
+    final response = await http.patch(url, headers: header, body: body);
     print(response.statusCode);
     return response;
   }

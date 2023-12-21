@@ -18,12 +18,13 @@ class PendingCarsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Obx(
-        () => ListView.builder(
-          itemCount: hostController.pendingVehicle.length,
-          itemBuilder: (context, index) {
-            VehicleModel vehicleDetails = hostController.pendingVehicle[index];
-            return hostController.pendingVehicle.isNotEmpty
-                ? Padding(
+        () => hostController.pendingVehicle.isNotEmpty
+            ? ListView.builder(
+                itemCount: hostController.pendingVehicle.length,
+                itemBuilder: (context, index) {
+                  VehicleModel vehicleDetails =
+                      hostController.pendingVehicle[index];
+                  return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Container(
                       width: Get.width / 1,
@@ -127,15 +128,12 @@ class PendingCarsScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                  )
-                // ignore: prefer_is_empty
-                : hostController.vehicleData.length < 0
-                    ? const Center(
-                        child: Text('No vehicle cound'),
-                      )
-                    : const SizedBox();
-          },
-        ),
+                  );
+                },
+              )
+            : const Center(
+                child: Text('No vehicle found'),
+              ),
       ),
     );
   }

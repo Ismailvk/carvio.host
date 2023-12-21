@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:second_project/resource/colors/colors.dart';
+import 'package:second_project/view/forget_password/forget_password_screen.dart';
 import 'package:second_project/view/login_page/sign_up.dart';
 import 'package:second_project/view_model/login_controller.dart';
 import 'package:second_project/widget/button_widget.dart';
@@ -111,6 +112,7 @@ class LoginScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             GestureDetector(
+                              onTap: () => Get.to(ForgetPasswordScreen()),
                               child: Text(
                                 'Forgot Password?',
                                 style: TextStyle(

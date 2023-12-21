@@ -57,7 +57,7 @@ class _EditVehicleScreenState extends State<EditVehicleScreen> {
           child: Obx(
             () => Column(
               children: [
-                AppbarBckbutton(text: 'Add vehicle details'),
+                AppbarBckbutton(text: 'Edit vehicle details', isClear: true),
                 Expanded(
                   child: Stepper(
                     controller: addVehicleController.scrollController,
@@ -72,13 +72,23 @@ class _EditVehicleScreenState extends State<EditVehicleScreen> {
                           children: [
                             Expanded(
                               child: ButtonWidget(
-                                title:
-                                    addVehicleController.currentStep.value != 1
-                                        ? 'Continue'
-                                        : 'Confirm',
-                                onPress: () => addVehicleController
-                                    .editVehicle(widget.vehicleData.id),
-                              ),
+                                  title:
+                                      addVehicleController.currentStep.value ==
+                                              0
+                                          ? 'Continue'
+                                          : 'Confirm',
+                                  onPress: () {
+                                    if (addVehicleController
+                                            .currentStep.value ==
+                                        addVehicleController.totalSteps - 1) {
+                                      // Last step, handle confirmation
+                                      addVehicleController
+                                          .editVehicle(widget.vehicleData.id);
+                                    } else {
+                                      // Move to the next step
+                                      addVehicleController.moveToNextStep();
+                                    }
+                                  }),
                             ),
                             const SizedBox(width: 10),
                             if (addVehicleController.currentStep != 0.obs)
@@ -245,6 +255,13 @@ class _EditVehicleScreenState extends State<EditVehicleScreen> {
                                                   child: IconButton(
                                                     onPressed: () {
                                                       addVehicleController
+                                                          .deleteVehicleImage(
+                                                              widget.vehicleData
+                                                                  .id,
+                                                              widget.vehicleData
+                                                                      .images[
+                                                                  index]);
+                                                      addVehicleController
                                                           .selectedImages
                                                           .removeAt(index);
                                                     },
@@ -309,13 +326,6 @@ class _EditVehicleScreenState extends State<EditVehicleScreen> {
                               ),
                             ),
                           )),
-                      // Step(
-                      //   isActive: addVehicleController.currentStep.value == 2,
-                      //   title: const Text('final'),
-                      //   content: Form(
-                      //       key: addVehicleController.addVehicleDocumentsKey,
-                      //       child: UploadImageScreen()),
-                      // )
                     ],
                   ),
                 ),

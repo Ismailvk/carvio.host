@@ -9,6 +9,7 @@ import 'package:second_project/model/vehicle_model.dart';
 import 'package:second_project/service/api_service.dart';
 import 'package:second_project/service/shared_preference.dart';
 import 'package:second_project/view/bottombar_screen/main_screen.dart';
+import 'package:http/http.dart' as http;
 
 class HostController extends GetxController {
   Rx<HostModel?> hostData = Rx<HostModel?>(null);
@@ -22,29 +23,44 @@ class HostController extends GetxController {
   GlobalKey<FormState> profileEditKey = GlobalKey<FormState>();
   Rx<File?> profileImage = Rx<File?>(null);
 
-  Future getHostDetails(String token) async {
+  // edit host password
+  GlobalKey<FormState> changePasswordKey = GlobalKey<FormState>();
+  TextEditingController oldPasswordController = TextEditingController();
+  TextEditingController newPasswordController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
+
+  Future<http.Response> getHostDetails(String token) async {
     final hostDataResponse = await ApiService.instance.getHostDetails(token);
     final body = jsonDecode(hostDataResponse.body);
     if (body['message'] != 'Internal server error') {
       final hostModel = HostModel.fromJson(body);
       hostData.value = hostModel;
-    } else {
-      return Get.snackbar('Error', '${body['message']}');
     }
-    return body;
+    return hostDataResponse;
   }
 
   Future<void> getHostVehicles(String token) async {
     final response = await ApiService.instance.getHostVehicles(token);
-    final List<dynamic> vehicleDetails = jsonDecode(response.body);
-    vehicleData.assignAll(
-        vehicleDetails.map((json) => VehicleModel.fromJson(json)).toList());
-    pendingVehicle.assignAll(
-        vehicleData.where((vehicle) => !vehicle.isVerified).toList());
-    verifiedVehicle
-        .assignAll(vehicleData.where((vehicle) => vehicle.isVerified).toList());
+    try {
+      if (response.statusCode == 200) {
+        final List<dynamic> vehicleDetails = jsonDecode(response.body);
+        vehicleData.assignAll(
+            vehicleDetails.map((json) => VehicleModel.fromJson(json)).toList());
+        pendingVehicle.assignAll(
+            vehicleData.where((vehicle) => !vehicle.isVerified).toList());
+        verifiedVehicle.assignAll(
+            vehicleData.where((vehicle) => vehicle.isVerified).toList());
 
-    update();
+        update();
+      } else if (response.statusCode == 500) {
+        final body = jsonDecode(response.body);
+        Get.snackbar('Error', body['message']);
+      } else {
+        Get.snackbar('Error', 'Something Went Wrong');
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Something Went Wrong');
+    }
   }
 
   setHostData(HostModel hostData) {
@@ -101,5 +117,51 @@ class HostController extends GetxController {
       if (croppedFile == null) return null;
       profileImage.value = File(croppedFile.path);
     }
+  }
+
+  Future<void> changePassword() async {
+    if (changePasswordKey.currentState!.validate()) {
+      final token = SharedPreference.instance.getToke();
+      if (token == null) {
+        return;
+      }
+      final changedPassword = {
+        "oldPass": oldPasswordController.text,
+        "password": newPasswordController.text,
+        "confirmPass": confirmPasswordController.text,
+      };
+      final response =
+          await ApiService.instance.changePassword(token, changedPassword);
+      try {
+        final responseBody = jsonDecode(response.body);
+        if (response.statusCode == 200 &&
+            responseBody['message'] == "Success") {
+          Get.snackbar('Success', "Your password Successfully changed");
+          Get.offAll(const CoustomNavBar());
+        } else if (response.statusCode == 403) {
+          Get.snackbar("Error", "${responseBody['message']}");
+        } else if (response.statusCode == 400) {
+          Get.snackbar("Error", "${responseBody['message']}");
+        }
+      } catch (e) {
+        Get.snackbar("Error", "$e");
+      }
+    }
+  }
+
+  String? validConfirmPassword(String confirmPassword) {
+    if (newPasswordController.text != confirmPasswordController.text) {
+      return 'Password does not match';
+    }
+    return null;
+  }
+
+  String? validPassword(String password) {
+    if (password.length < 6) {
+      return 'Must be more than 6 charater';
+    } else if (password.isEmpty) {
+      return 'Password is required';
+    }
+    return null;
   }
 }

@@ -10,4 +10,7 @@ class Urls {
   static const String editVehicle = 'host/edit-vehicle';
   static const String editHostData = 'host/update-host';
   static const String uploadProfile = 'host/upload-profile';
+  static const String deleteVehicleImage = 'host/delete-image';
+  static const String forgetPassword = 'host/forgot-password';
+  static const String changePassword = 'host/change-pass';
 }

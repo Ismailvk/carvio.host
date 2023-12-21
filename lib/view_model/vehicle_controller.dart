@@ -15,6 +15,7 @@ class VehicleController extends GetxController {
   GlobalKey<FormState> addVehicleDocumentsKey = GlobalKey<FormState>();
   var currentStep = 0.obs;
   ScrollController scrollController = ScrollController();
+  final int totalSteps = 2;
   // first page
   final TextEditingController nameController = TextEditingController();
   final TextEditingController brandController = TextEditingController();
@@ -24,6 +25,7 @@ class VehicleController extends GetxController {
   final TextEditingController locationController = TextEditingController();
 
   RxList<File> selectedImages = <File>[].obs;
+  RxList<File> editFileImage = <File>[].obs;
   final TextEditingController fuelController = TextEditingController();
   final TextEditingController transmissionController = TextEditingController();
   Rx<File?> pickedImage = Rx<File?>(null);
@@ -41,6 +43,7 @@ class VehicleController extends GetxController {
       if (croppedFile == null) return null;
       pickedImage.value = File(croppedFile.path);
       selectedImages.add(pickedImage.value!);
+      editFileImage.add(pickedImage.value!);
     }
   }
 
@@ -123,6 +126,16 @@ class VehicleController extends GetxController {
     }
   }
 
+  deleteVehicleImage(String vehicleId, String imageId) {
+    final token = SharedPreference.instance.getToke();
+    if (token == null) {
+      Get.snackbar('Error', "You cant't delete vehicle Image");
+      return;
+    }
+
+    ApiService.instance.deleteVehicleImages(vehicleId, imageId, token);
+  }
+
   editVehicle(String id) async {
     if (addVehicleDetailsKey.currentState!.validate()) {
       currentStep.value = (currentStep.value + 1).clamp(0, 1);
@@ -146,7 +159,7 @@ class VehicleController extends GetxController {
           };
           try {
             final response = await ApiService.instance
-                .editVehicle(id, editedVehicleData, selectedImages);
+                .editVehicle(id, editedVehicleData, editFileImage);
             if (response.statusCode == 200) {
               HostController hostController = Get.put(HostController());
               final token = SharedPreference.instance.getToke();
@@ -155,6 +168,7 @@ class VehicleController extends GetxController {
               }
               await hostController.getHostVehicles(token);
               Get.snackbar('Success', 'Vehicle Edited Successfully');
+              resetValues();
               Get.offAll(const CoustomNavBar());
             }
           } catch (e) {
@@ -174,7 +188,24 @@ class VehicleController extends GetxController {
     return null;
   }
 
+  void moveToNextStep() {
+    currentStep.value = (currentStep.value + 1).clamp(0, totalSteps - 1);
+  }
+
   void moveToPreviousStep() {
-    currentStep.value = (currentStep.value - 1).clamp(0, 2);
+    currentStep.value = (currentStep.value - 1).clamp(0, 1);
+  }
+
+  void resetValues() {
+    nameController.text = '';
+    brandController.text = '';
+    modelController.text = '';
+    locationController.text = '';
+    priceController.text = '';
+    fuelController.text = '';
+    transmissionController.text = '';
+    // Clear the list
+    selectedImages.clear();
+    // Reset other relevant variables as needed
   }
 }

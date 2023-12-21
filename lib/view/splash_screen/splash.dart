@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:second_project/model/host_model.dart';
@@ -39,15 +41,20 @@ class _SplashScreenState extends State<SplashScreen> {
     print('token is $token');
     if (token != null) {
       final data = await hostController.getHostDetails(token);
-      if (data != null) {
-        await hostController.getHostVehicles(token);
-        final hostData = HostModel.fromJson(data);
-
-        hostController.hostData.value = hostData;
-        Get.to(const CoustomNavBar());
+      print(data.statusCode);
+      if (data.statusCode == 200) {
+        final body = jsonDecode(data.body);
+        if (body != null) {
+          await hostController.getHostVehicles(token);
+          final hostData = HostModel.fromJson(body);
+          hostController.hostData.value = hostData;
+          Get.to(const CoustomNavBar());
+        } else {
+          Get.to(LoginScreen());
+          Get.snackbar('Error', 'Plese login your account');
+        }
       } else {
         Get.to(LoginScreen());
-        Get.snackbar('Error', 'Plese login your account');
       }
     } else {
       Get.to(LoginScreen());

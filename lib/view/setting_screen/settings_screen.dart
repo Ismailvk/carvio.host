@@ -23,7 +23,7 @@ class SettingsScreen extends StatelessWidget {
             child: SettingsListTileWidget(title: 'Profile Settings'),
           ),
           GestureDetector(
-            onTap: () => Get.to(const ChangePasswordScreen()),
+            onTap: () => Get.to(ChangePasswordScreen()),
             child: SettingsListTileWidget(title: 'Change Password'),
           ),
           GestureDetector(
