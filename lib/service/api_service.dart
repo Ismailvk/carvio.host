@@ -26,7 +26,6 @@ class ApiService {
     final url = Uri.parse("${Urls.baseUrl}/${Urls.verufyOtp}");
     final body = jsonEncode(otp);
     final response = await http.post(url, body: body, headers: headers);
-    print(response.body);
     return response;
   }
 
@@ -44,7 +43,6 @@ class ApiService {
     final url = Uri.parse("${Urls.baseUrl}/${Urls.loginHost}");
     final body = jsonEncode(logindata);
     final response = await http.post(url, body: body, headers: headers);
-    print(response.statusCode);
     return response;
   }
 
@@ -151,7 +149,8 @@ class ApiService {
     return response;
   }
 
-  deleteVehicleImages(String vehicleId, String imageId, String token) async {
+  Future deleteVehicleImages(
+      String vehicleId, String imageId, String token) async {
     final url = Uri.parse(
         '${Urls.baseUrl}/${Urls.deleteVehicleImage}/$vehicleId?file=$imageId');
     final header = {
@@ -194,7 +193,6 @@ class ApiService {
     );
     request.files.add(profilePhotoMultipartFile);
     final response = await request.send();
-    print(response.statusCode);
     return response;
   }
 
@@ -202,7 +200,6 @@ class ApiService {
     final url = Uri.parse('${Urls.baseUrl}/${Urls.forgetPassword}');
     final body = jsonEncode(email);
     final response = await http.post(url, headers: headers, body: body);
-    print(response.statusCode);
     return response;
   }
 
@@ -216,6 +213,17 @@ class ApiService {
       'Cookie': 'jwtHost=$token'
     };
     final response = await http.patch(url, headers: header, body: body);
+    return response;
+  }
+
+  Future<http.Response> dashBoard(String token) async {
+    final url = Uri.parse('${Urls.baseUrl}/${Urls.dashboard}');
+    final header = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+      'Cookie': 'jwtHost=$token'
+    };
+    final response = await http.get(url, headers: header);
     print(response.statusCode);
     return response;
   }

@@ -13,8 +13,7 @@ class ForgetPassword extends GetxController {
       try {
         final response = await ApiService.instance.forgetPassword(emailData);
         if (response.statusCode == 200) {
-          print('perfect');
-          print(response.body);
+          //
         }
       } catch (e) {
         Get.snackbar('Error', '$e');

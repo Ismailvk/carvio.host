@@ -252,20 +252,22 @@ class _EditVehicleScreenState extends State<EditVehicleScreen> {
                                                   ),
                                                 ),
                                                 Center(
-                                                  child: IconButton(
-                                                    onPressed: () {
+                                                  child: InkWell(
+                                                    onTap: () {
                                                       addVehicleController
                                                           .deleteVehicleImage(
                                                               widget.vehicleData
                                                                   .id,
-                                                              widget.vehicleData
-                                                                      .images[
-                                                                  index]);
+                                                              addVehicleController
+                                                                  .selectedImages[
+                                                                      index]
+                                                                  .path,
+                                                              index);
                                                       addVehicleController
                                                           .selectedImages
                                                           .removeAt(index);
                                                     },
-                                                    icon: const Icon(
+                                                    child: const Icon(
                                                       Icons.delete,
                                                       size: 40,
                                                       color: Colors.red,

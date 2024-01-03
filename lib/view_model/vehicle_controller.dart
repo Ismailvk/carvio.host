@@ -5,6 +5,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:second_project/service/api_service.dart';
 import 'package:second_project/service/shared_preference.dart';
+import 'package:second_project/utils/converting_string_to_file.dart';
 import 'package:second_project/view/bottombar_screen/main_screen.dart';
 import 'package:second_project/view_model/host_controller.dart';
 import 'package:second_project/view_model/upload_image_screen_controller.dart';
@@ -44,6 +45,7 @@ class VehicleController extends GetxController {
       pickedImage.value = File(croppedFile.path);
       selectedImages.add(pickedImage.value!);
       editFileImage.add(pickedImage.value!);
+      print('images $selectedImages');
     }
   }
 
@@ -126,14 +128,17 @@ class VehicleController extends GetxController {
     }
   }
 
-  deleteVehicleImage(String vehicleId, String imageId) {
+  deleteVehicleImage(String vehicleId, String imageId, int index) async {
     final token = SharedPreference.instance.getToke();
     if (token == null) {
       Get.snackbar('Error', "You cant't delete vehicle Image");
       return;
     }
-
-    ApiService.instance.deleteVehicleImages(vehicleId, imageId, token);
+    if (imageId.contains('image_cropper_')) {
+      return;
+    }
+    String fileImage = convertFileListToOldFormat(selectedImages[index]);
+    await ApiService.instance.deleteVehicleImages(vehicleId, fileImage, token);
   }
 
   editVehicle(String id) async {

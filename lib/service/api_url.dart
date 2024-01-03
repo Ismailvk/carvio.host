@@ -13,4 +13,5 @@ class Urls {
   static const String deleteVehicleImage = 'host/delete-image';
   static const String forgetPassword = 'host/forgot-password';
   static const String changePassword = 'host/change-pass';
+  static const String dashboard = 'host/dashboard';
 }

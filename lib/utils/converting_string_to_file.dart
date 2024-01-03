@@ -29,3 +29,10 @@ Future<List<File>> convertingStringtoImage(List<String> imageUrls) async {
 
   return imageFiles;
 }
+
+String convertFileListToOldFormat(File files) {
+  String fileName = files.path;
+  String name = basename(fileName);
+
+  return name;
+}

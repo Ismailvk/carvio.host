@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -52,10 +54,17 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                               height: Get.height / 7,
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(60),
-                                child: Image.network(
-                                  '${Urls.baseUrl}/$profileImage',
-                                  fit: BoxFit.cover,
-                                ),
+                                child: hostController.profileImage.value != null
+                                    ? CircleAvatar(
+                                        backgroundImage: FileImage(File(
+                                            hostController
+                                                .profileImage.value!.path)),
+                                        // radius: 80,
+                                      )
+                                    : Image.network(
+                                        '${Urls.baseUrl}/$profileImage',
+                                        fit: BoxFit.cover,
+                                      ),
                               ),
                             )
                           : CircleAvatar(

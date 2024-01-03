@@ -1,9 +1,3 @@
-// To parse this JSON data, do
-// final hostModel = hostModelFromJson(jsonString);
-// import 'dart:convert';
-// HostModel hostModelFromJson(String str) => HostModel.fromJson(json.decode(str));
-// String hostModelToJson(HostModel data) => json.encode(data.toJson());
-
 class HostModel {
   String id;
   String name;
